@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reporte de Sesión — GLD | La Zona</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0d0d1a; --navy-soft:#13132a; --panel:#15152c;
+    --cyan:#00e5ff; --violet:#8b5cf6; --text:#e8e9f5; --text-dim:#9a9ab4;
+    --border:rgba(0,229,255,0.15); --green:#20c997; --red:#ff4d5e; --gray:#8a8aa8;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:radial-gradient(circle at 15% 0%, #12122a 0%, var(--navy) 45%, #090912 100%);
+    color:var(--text); font-family:'Montserrat',sans-serif; font-weight:400;
+    line-height:1.65; position:relative; overflow-x:hidden;
+  }
+  .watermark{
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+    z-index:0; pointer-events:none; user-select:none;
+    width:520px; max-width:60vw;
+    opacity:0.06;
+  }
+  .watermark img{width:100%;height:auto;display:block;}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:0 32px 90px;position:relative;z-index:1;}
+
+  header{
+    padding:60px 32px 42px; text-align:center; position:relative;
+    border-bottom:1px solid var(--border);
+    background:linear-gradient(180deg, rgba(0,229,255,0.06), transparent 70%);
+  }
+  header::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg, transparent, var(--cyan), var(--violet), transparent);}
+  .brand-row{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:20px;flex-wrap:wrap;}
+  .brand-pill{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;letter-spacing:2.5px;
+    color:var(--cyan);text-transform:uppercase;font-weight:800;padding:7px 16px;
+    border:1px solid var(--border);border-radius:999px;background:rgba(0,229,255,0.06);}
+  .brand-pill.violet{color:var(--violet);border-color:rgba(139,92,246,0.25);background:rgba(139,92,246,0.07);}
+  .brand-x{color:var(--text-dim);font-weight:900;font-size:16px;}
+  h1.title{font-weight:900;font-size:clamp(24px,4vw,38px);margin:0 0 12px;letter-spacing:.3px;
+    background:linear-gradient(90deg,#ffffff,var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .subtitle{color:var(--text-dim);font-size:14px;font-weight:500;max-width:640px;margin:0 auto;}
+  .date-tag{display:inline-block;margin-top:16px;font-size:12px;font-weight:800;letter-spacing:1px;
+    color:var(--navy);background:linear-gradient(135deg,var(--cyan),var(--violet));padding:6px 16px;border-radius:8px;}
+
+  .summary-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:32px;}
+  @media(max-width:760px){.summary-strip{grid-template-columns:repeat(2,1fr);}}
+  .stat-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:15px 16px;text-align:center;}
+  .stat-card .lbl{font-size:10px;letter-spacing:1.3px;text-transform:uppercase;color:var(--text-dim);font-weight:700;margin-bottom:6px;}
+  .stat-card .val{font-size:17px;font-weight:900;color:var(--text);}
+  .stat-card .val.bear{color:var(--red);} .stat-card .val.bull{color:var(--green);} .stat-card .val.cyan{color:var(--cyan);}
+
+  section{margin-top:50px;padding:32px 32px 28px;background:var(--panel);border:1px solid var(--border);
+    border-radius:18px;position:relative;overflow:hidden;}
+  section::after{content:"";position:absolute;top:-1px;left:24px;right:24px;height:1px;
+    background:linear-gradient(90deg, transparent, var(--cyan), transparent);opacity:.5;}
+  .sec-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:6px;}
+  .sec-num{flex:0 0 auto;width:42px;height:42px;border-radius:12px;display:flex;align-items:center;
+    justify-content:center;font-weight:900;font-size:17px;color:var(--navy);
+    background:linear-gradient(135deg,var(--cyan),var(--violet));}
+  .sec-title{font-weight:800;font-size:19px;letter-spacing:.2px;color:#fff;margin:0 0 4px;}
+  .sec-title .accent{color:var(--cyan);}
+  .sec-sub{font-size:12px;color:var(--text-dim);font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+
+  .desc{margin:18px 0 22px;font-size:14px;color:var(--text-dim);background:rgba(0,229,255,0.04);
+    border-left:3px solid var(--cyan);padding:13px 17px;border-radius:0 10px 10px 0;}
+  .desc strong{color:var(--text);font-weight:700;}
+  .desc.v{border-left-color:var(--violet);background:rgba(139,92,246,0.05);}
+
+  .chart-frame{border-radius:12px;overflow:hidden;border:1px solid var(--border);
+    background:var(--navy-soft); padding:8px 6px 4px;
+    box-shadow:0 20px 50px -20px rgba(0,229,255,0.15);}
+
+  .legend-row{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;justify-content:center;}
+  .legend-item{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text-dim);font-weight:700;}
+  .legend-dot{width:10px;height:10px;border-radius:50%;}
+
+  .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px;}
+  @media(max-width:700px){.stat-row{grid-template-columns:1fr;}}
+  .mini-stat{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px 14px;text-align:center;}
+  .mini-stat .lbl{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-dim);font-weight:700;margin-bottom:5px;}
+  .mini-stat .val{font-size:16px;font-weight:900;}
+  .mini-stat .val.g{color:var(--green);} .mini-stat .val.r{color:var(--red);} .mini-stat .val.c{color:var(--cyan);}
+
+  .insight-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px;}
+  @media(max-width:700px){.insight-row{grid-template-columns:1fr;}}
+  .insight{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:14px 16px;}
+  .insight h4{margin:0 0 6px;font-size:11.5px;letter-spacing:1px;text-transform:uppercase;font-weight:800;color:var(--cyan);}
+  .insight p{margin:0;font-size:13px;color:var(--text-dim);}
+
+  table.data-table{width:100%;border-collapse:collapse;margin-top:6px;font-size:11px;}
+  table.data-table th{text-align:left;background:rgba(139,92,246,0.12);color:var(--violet);font-weight:800;
+    padding:8px 10px;text-transform:uppercase;font-size:9.5px;letter-spacing:0.5px;border-bottom:1px solid var(--border);}
+  table.data-table td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.06);color:var(--text); white-space:nowrap;}
+  table.data-table tr:last-child td{border-bottom:none;}
+  table.data-table tr:hover td{background:rgba(0,229,255,0.03);}
+  
+  /* Destacado para filas marcadas (cuadrado transparente en QuantData) */
+  .highlight-row td {
+    border-top: 1px solid rgba(255,255,255,0.4);
+    border-bottom: 1px solid rgba(255,255,255,0.4) !important;
+    background: rgba(255,255,255,0.08);
+  }
+
+  .tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:9.5px;font-weight:800;letter-spacing:.5px;margin-right:5px;}
+  .tag.sell{background:rgba(255,77,94,0.15);color:var(--red);}
+  .tag.buy{background:rgba(32,201,151,0.15);color:var(--green);}
+  .tag.neu{background:rgba(154,154,180,0.15);color:var(--gray);}
+  .table-scroll{overflow-x:auto;}
+
+  .glossary{margin-top:66px;}
+  .glossary h2{font-weight:900;font-size:22px;color:#fff;text-align:center;margin-bottom:8px;}
+  .glossary .sub{text-align:center;color:var(--text-dim);font-size:13px;margin-bottom:28px;}
+  .term-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:700px){.term-grid{grid-template-columns:1fr;}}
+  .term-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:17px 19px;}
+  .term-card h4{margin:0 0 7px;font-weight:900;font-size:13.5px;color:var(--cyan);letter-spacing:.3px;}
+  .term-card p{font-size:12.5px;color:var(--text-dim);margin:0;}
+  .term-card p strong{color:var(--text);font-weight:700;}
+
+  .note{margin-top:14px;font-size:11px;color:var(--text-dim);opacity:.75;font-style:italic;}
+
+  .disclaimer{margin-top:56px;padding:20px 24px;border-radius:14px;
+    background:rgba(255,77,94,0.05);border:1px solid rgba(255,77,94,0.25);}
+  .disclaimer h3{margin:0 0 10px;font-size:12.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);font-weight:800;}
+  .disclaimer p{margin:0 0 10px;font-size:12px;color:var(--text-dim);line-height:1.7;}
+  .disclaimer p:last-child{margin-bottom:0;}
+
+  footer{margin-top:56px;padding-top:28px;border-top:1px solid var(--border);
+    display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;}
+  footer .credit{font-size:12px;color:var(--text-dim);font-weight:600;}
+  footer .credit strong{color:var(--cyan);font-weight:800;}
+</style>
+</head>
+<body>
+
+<div class="watermark">
+  <img src="3. Completo - Morado_2.png" alt="La Zona">
+</div>
+
+<header>
+  <div class="brand-row">
+    <span class="brand-pill violet">La Zona</span>
+  </div>
+  <h1 class="title">Reporte de Sesión — GLD</h1>
+  <p class="subtitle">Análisis de QuantData con niveles de Dark Pool, impresiones institucionales, exposición de Gamma, flujo de opciones (Consolidado y No Consolidado) para GLD.</p>
+  <div class="date-tag">Sesión · 4 de Septiembre, 2026</div>
+
+  <div class="summary-strip">
+    <div class="stat-card"><div class="lbl">Sentimiento Global</div><div class="val bear">Bajista</div></div>
+    <div class="stat-card"><div class="lbl">Put / Call Ratio</div><div class="val">78.95%</div></div>
+    <div class="stat-card"><div class="lbl">Put / Call Volumen</div><div class="val">1.67K / 10.42K</div></div>
+    <div class="stat-card"><div class="lbl">Prima Put / Call</div><div class="val cyan">$375.02K / $1.09M</div></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- 1. DARK POOL LEVELS -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num">1</div>
+      <div>
+        <h3 class="sec-title">Dark Pool <span class="accent">Levels (Top 50)</span></h3>
+        <div class="sec-sub">Niveles de precio con mayor Notional acumulado · GLD · 4 Sep 2026</div>
+      </div>
+    </div>
+    <div class="desc">
+      Ranking del <strong>Notional acumulado</strong> por nivel de precio a lo largo de toda la sesión.
+    </div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>#</th><th>Precio</th><th>Notional</th><th>Trades</th><th>Volumen</th><th>% del Total</th></tr></thead>
+        <tbody>
+<tr><td>1</td><td>$406.32</td><td>$17.92M</td><td>305</td><td>44.11K</td><td>3.16%</td></tr>
+<tr><td>2</td><td>$400.49</td><td>$6.01M</td><td>2</td><td>15K</td><td>0.02%</td></tr>
+<tr><td>3</td><td>$406.37</td><td>$5.33M</td><td>322</td><td>13.12K</td><td>3.34%</td></tr>
+<tr><td>4</td><td>$407.17</td><td>$5.13M</td><td>98</td><td>12.59K</td><td>1.02%</td></tr>
+<tr><td>5</td><td>$406.24</td><td>$5.07M</td><td>258</td><td>12.49K</td><td>2.68%</td></tr>
+<tr><td>6</td><td>$406.54</td><td>$4.50M</td><td>176</td><td>11.07K</td><td>1.83%</td></tr>
+<tr><td>7</td><td>$406.33</td><td>$4.44M</td><td>245</td><td>10.94K</td><td>2.54%</td></tr>
+<tr><td>8</td><td>$406.40</td><td>$4.40M</td><td>287</td><td>10.82K</td><td>2.98%</td></tr>
+<tr><td>9</td><td>$405.74</td><td>$4.36M</td><td>197</td><td>10.74K</td><td>2.04%</td></tr>
+<tr><td>10</td><td>$405.55</td><td>$4.28M</td><td>185</td><td>10.54K</td><td>1.92%</td></tr>
+<tr><td>11</td><td>$405.73</td><td>$3.95M</td><td>170</td><td>9.75K</td><td>1.76%</td></tr>
+<tr><td>12</td><td>$405.56</td><td>$3.88M</td><td>217</td><td>9.57K</td><td>2.25%</td></tr>
+<tr><td>13</td><td>$406.42</td><td>$3.79M</td><td>268</td><td>9.32K</td><td>2.78%</td></tr>
+<tr><td>14</td><td>$406.64</td><td>$3.63M</td><td>149</td><td>8.94K</td><td>1.55%</td></tr>
+<tr><td>15</td><td>$406.39</td><td>$3.60M</td><td>285</td><td>8.87K</td><td>2.96%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="insight-row">
+      <div class="insight">
+        <h4>Nivel Principal $406.32</h4>
+        <p>El precio <strong>$406.32</strong> concentró el mayor volumen con $17.92 Millones, superando ampliamente al resto de niveles y marcando una zona de resistencia o soporte clave establecida durante la mañana.</p>
+      </div>
+      <div class="insight">
+        <h4>Bloque Anómalo en $400.49</h4>
+        <p>A pesar de registrar solo 2 operaciones, el nivel <strong>$400.49</strong> acumuló $6.01 Millones. Este volumen masivo en tan pocas transacciones sugiere una negociación de bloque (block trade) preacordada muy por debajo de la zona de negociación activa.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. EQUITY PRINTS -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num">2</div>
+      <div>
+        <h3 class="sec-title">Equity Prints <span class="accent">(Dark Pool)</span></h3>
+        <div class="sec-sub">Bloques negociados fuera de bolsa · GLD · 4 de Septiembre, 2026</div>
+      </div>
+    </div>
+    <div class="desc v">
+      Registro de las impresiones de mayor tamaño ejecutadas en <strong>Dark Pools</strong> durante la sesión.
+    </div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>Hora</th><th>Cantidad</th><th>Precio</th><th>Notional</th><th>Bid-Ask</th></tr></thead>
+        <tbody>
+<tr><td>10:30:16 AM</td><td>35,486</td><td>$406.32</td><td><span class="tag sell">VENTA</span> $14.42 M</td><td>$406.33 x $406.36</td></tr>
+<tr><td>8:51:30 AM</td><td>15,000</td><td>$400.49</td><td><span class="tag sell">VENTA</span> $6.01 M</td><td>$403.47 x $403.57</td></tr>
+<tr><td>11:28:36 AM</td><td>11,846</td><td>$407.17</td><td><span class="tag sell">VENTA</span> $4.82 M</td><td>$407.18 x $407.20</td></tr>
+<tr><td>9:06:34 AM</td><td>6,196</td><td>$401.44</td><td><span class="tag sell">VENTA</span> $2.49 M</td><td>$401.58 x $401.69</td></tr>
+<tr><td>10:58:07 AM</td><td>5,000</td><td>$405.70</td><td><span class="tag buy">COMPRA</span> $2.03 M</td><td>$405.70 x $405.71</td></tr>
+<tr><td>8:39:08 AM</td><td>5,000</td><td>$402.87</td><td><span class="tag buy">COMPRA</span> $2.01 M</td><td>$402.79 x $402.91</td></tr>
+<tr><td>10:25:14 AM</td><td>4,487</td><td>$406.54</td><td><span class="tag buy">COMPRA</span> $1.82 M</td><td>$406.49 x $406.52</td></tr>
+<tr><td>9:36:06 AM</td><td>4,359</td><td>$404.59</td><td><span class="tag buy">COMPRA</span> $1.76 M</td><td>$404.53 x $404.62</td></tr>
+<tr><td>9:31:58 AM</td><td>4,351</td><td>$404.99</td><td><span class="tag buy">COMPRA</span> $1.76 M</td><td>$404.94 x $405.01</td></tr>
+<tr><td>10:54:22 AM</td><td>4,331</td><td>$405.47</td><td><span class="tag buy">COMPRA</span> $1.76 M</td><td>$405.32 x $405.38</td></tr>
+<tr><td>8:44:07 AM</td><td>4,080</td><td>$403.70</td><td><span class="tag sell">VENTA</span> $1.65 M</td><td>$403.69 x $403.80</td></tr>
+<tr><td>9:48:49 AM</td><td>3,689</td><td>$406.44</td><td><span class="tag buy">COMPRA</span> $1.50 M</td><td>$406.40 x $406.44</td></tr>
+<tr><td>8:36:05 AM</td><td>3,720</td><td>$402.40</td><td><span class="tag sell">VENTA</span> $1.50 M</td><td>$402.28 x $402.55</td></tr>
+<tr><td>10:16:08 AM</td><td>3,655</td><td>$406.64</td><td><span class="tag buy">COMPRA</span> $1.49 M</td><td>$406.58 x $406.62</td></tr>
+<tr><td>9:41:59 AM</td><td>3,659</td><td>$404.44</td><td><span class="tag sell">VENTA</span> $1.48 M</td><td>$404.46 x $404.51</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="insight-row">
+      <div class="insight">
+        <h4>Mega Impresión a las 10:30 AM</h4>
+        <p>Una orden de 35,486 acciones generó un Notional de <strong>$14.42 Millones</strong> clasificada como venta en $406.32. Esta transacción por sí sola conforma la gran mayoría del nivel dominante del Dark Pool ranking.</p>
+      </div>
+      <div class="insight">
+        <h4>Bloque de Venta Pre-Market</h4>
+        <p>A las 8:51 AM se registró otra gran orden de venta de 15,000 acciones por $6.01 Millones a un precio de $400.49, confirmando el origen del segundo nivel con mayor notional del día.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. GAMMA EXPOSURE -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num">3</div>
+      <div>
+        <h3 class="sec-title">Exposición de <span class="accent">Gamma por Strike</span></h3>
+        <div class="sec-sub">Vencimiento 11 de Septiembre, 2026 · GLD</div>
+      </div>
+    </div>
+    <div class="desc">
+      El <strong>Net Gamma Exposure (GEX)</strong> mide la cobertura delta que deben ejecutar los Market Makers. Ajuste visual en el eje Y a -40M/+40M para mayor claridad.
+    </div>
+    <div class="chart-frame">
+      <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+        <line x1="70" y1="350" x2="870" y2="350" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <text x="60" y="354" text-anchor="end" font-size="10.5" fill="#9a9ab4" font-family="Montserrat,sans-serif">-40M</text>
+
+        <line x1="70" y1="275" x2="870" y2="275" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <text x="60" y="279" text-anchor="end" font-size="10.5" fill="#9a9ab4" font-family="Montserrat,sans-serif">-20M</text>
+
+        <line x1="70" y1="200" x2="870" y2="200" stroke="#3a3a5a" stroke-width="1.4"/>
+        <text x="60" y="204" text-anchor="end" font-size="10.5" fill="#9a9ab4" font-family="Montserrat,sans-serif">0M</text>
+
+        <line x1="70" y1="125" x2="870" y2="125" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <text x="60" y="129" text-anchor="end" font-size="10.5" fill="#9a9ab4" font-family="Montserrat,sans-serif">20M</text>
+
+        <line x1="70" y1="50" x2="870" y2="50" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <text x="60" y="54" text-anchor="end" font-size="10.5" fill="#9a9ab4" font-family="Montserrat,sans-serif">40M</text>
+
+        <line x1="560" y1="30" x2="560" y2="380" stroke="#00e5ff" stroke-dasharray="4" stroke-width="1.5" opacity="0.6"/>
+
+        <!-- Positive Bars (Green) -->
+        <rect x="580" y="193" width="8" height="7" fill="#20c997" fill-opacity="0.85" rx="1.5"/>
+        <rect x="600" y="166" width="8" height="34" fill="#20c997" fill-opacity="0.85" rx="1.5"/>
+        <rect x="620" y="166" width="8" height="34" fill="#20c997" fill-opacity="0.85" rx="1.5"/>
+        <text x="624" y="380" text-anchor="middle" font-size="9.5" fill="#7a7a98" font-family="Montserrat,sans-serif">$415</text>
+        
+        <rect x="640" y="190" width="8" height="10" fill="#20c997" fill-opacity="0.85" rx="1.5"/>
+        <rect x="670" y="125" width="8" height="75" fill="#20c997" fill-opacity="0.85" rx="1.5"/>
+        <text x="674" y="380" text-anchor="middle" font-size="9.5" fill="#7a7a98" font-family="Montserrat,sans-serif">$420</text>
+
+        <rect x="730" y="116" width="8" height="84" fill="#20c997" fill-opacity="0.85" rx="1.5"/>
+        <text x="734" y="380" text-anchor="middle" font-size="9.5" fill="#7a7a98" font-family="Montserrat,sans-serif">$425</text>
+        
+        <rect x="790" y="78" width="8" height="122" fill="#20c997" fill-opacity="1" rx="1.5"/>
+        <text x="794" y="380" text-anchor="middle" font-size="9.5" fill="#7a7a98" font-family="Montserrat,sans-serif">$430</text>
+
+        <rect x="850" y="190" width="8" height="10" fill="#20c997" fill-opacity="0.85" rx="1.5"/>
+        <text x="854" y="380" text-anchor="middle" font-size="9.5" fill="#7a7a98" font-family="Montserrat,sans-serif">$435</text>
+
+        <!-- Negative Bars (Red) -->
+        <rect x="540" y="200" width="8" height="10" fill="#ff4d5e" fill-opacity="0.85" rx="1.5"/>
+        <text x="544" y="380" text-anchor="middle" font-size="9.5" fill="#7a7a98" font-family="Montserrat,sans-serif">$405</text>
+
+        <rect x="470" y="200" width="8" height="68" fill="#ff4d5e" fill-opacity="0.85" rx="1.5"/>
+        <text x="474" y="380" text-anchor="middle" font-size="9.5" fill="#7a7a98" font-family="Montserrat,sans-serif">$400</text>
+
+        <rect x="400" y="200" width="8" height="12" fill="#ff4d5e" fill-opacity="0.85" rx="1.5"/>
+        <text x="404" y="380" text-anchor="middle" font-size="9.5" fill="#7a7a98" font-family="Montserrat,sans-serif">$395</text>
+        
+        <text x="334" y="380" text-anchor="middle" font-size="9.5" fill="#7a7a98" font-family="Montserrat,sans-serif">$390</text>
+        <text x="264" y="380" text-anchor="middle" font-size="9.5" fill="#7a7a98" font-family="Montserrat,sans-serif">$385</text>
+        <text x="194" y="380" text-anchor="middle" font-size="9.5" fill="#7a7a98" font-family="Montserrat,sans-serif">$380</text>
+        <text x="124" y="380" text-anchor="middle" font-size="9.5" fill="#7a7a98" font-family="Montserrat,sans-serif">$375</text>
+
+        <text x="450" y="16" text-anchor="middle" font-size="13" font-weight="700" fill="#e8e9f5" font-family="Montserrat,sans-serif">Net Gamma Exposure by Strike — GLD · Vto. 11 Sep 2026</text>
+      </svg>
+    </div>
+    <div class="stat-row">
+      <div class="mini-stat"><div class="lbl">Strike Dominante</div><div class="val c">~$430</div></div>
+      <div class="mini-stat"><div class="lbl">Net GEX Total</div><div class="val g">89.20M</div></div>
+      <div class="mini-stat"><div class="lbl">Precio Spot</div><div class="val c">$407.00</div></div>
+    </div>
+    <div class="insight-row">
+      <div class="insight">
+        <h4>Muralla Alcista Distante</h4>
+        <p>El strike con mayor Gamma positiva se ubica lejos del precio actual, en <strong>$430</strong>. En conjunto con los strikes de $420 y $425, forman un enorme bloque de resistencia técnica al alza. El Net GEX general se mantiene sólidamente positivo.</p>
+      </div>
+      <div class="insight">
+        <h4>Hoyo de Volatilidad en $400</h4>
+        <p>El mayor foco de Gamma negativa reside en la zona psicológica de los <strong>$400</strong>. Si el precio retrocede hacia este nivel, la cobertura forzada de opciones (short delta) aceleraría significativamente el movimiento bajista.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. NET FLOW -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num">4</div>
+      <div>
+        <h3 class="sec-title">Net Flow <span class="accent">(Flujo Neto de Prima)</span></h3>
+        <div class="sec-sub">Vencimiento 11 de Septiembre, 2026 · GLD · 4 de Septiembre, 2026</div>
+      </div>
+    </div>
+    <div class="desc v">
+      Volumen bruto de prima entrando a <strong>Calls</strong> (verde) y <strong>Puts</strong> (rojo) intradía.
+    </div>
+    <div class="chart-frame"><svg viewBox="0 0 900 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+<rect x="0" y="0" width="900" height="380" fill="transparent"/>
+<line x1="70" y1="344.0" x2="830" y2="344.0" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+<text x="60" y="348.0" text-anchor="end" font-size="11" fill="#9a9ab4" font-family="Montserrat,sans-serif">$0</text>
+<line x1="70" y1="285" x2="830" y2="285" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+<text x="60" y="289" text-anchor="end" font-size="11" fill="#9a9ab4" font-family="Montserrat,sans-serif">100K</text>
+<line x1="70" y1="228" x2="830" y2="228" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+<text x="60" y="232" text-anchor="end" font-size="11" fill="#9a9ab4" font-family="Montserrat,sans-serif">200K</text>
+<line x1="70" y1="171" x2="830" y2="171" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+<text x="60" y="175" text-anchor="end" font-size="11" fill="#9a9ab4" font-family="Montserrat,sans-serif">300K</text>
+<line x1="70" y1="114" x2="830" y2="114" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+<text x="60" y="118" text-anchor="end" font-size="11" fill="#9a9ab4" font-family="Montserrat,sans-serif">400K</text>
+<line x1="70" y1="57" x2="830" y2="57" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+<text x="60" y="61" text-anchor="end" font-size="11" fill="#9a9ab4" font-family="Montserrat,sans-serif">500K</text>
+
+<text x="70.0" y="370" text-anchor="middle" font-size="10" fill="#7a7a98" font-family="Montserrat,sans-serif">9:30</text>
+<text x="196.6" y="370" text-anchor="middle" font-size="10" fill="#7a7a98" font-family="Montserrat,sans-serif">10:00</text>
+<text x="323.3" y="370" text-anchor="middle" font-size="10" fill="#7a7a98" font-family="Montserrat,sans-serif">10:30</text>
+<text x="450.0" y="370" text-anchor="middle" font-size="10" fill="#7a7a98" font-family="Montserrat,sans-serif">11:00</text>
+<text x="576.6" y="370" text-anchor="middle" font-size="10" fill="#7a7a98" font-family="Montserrat,sans-serif">11:30</text>
+<text x="703.3" y="370" text-anchor="middle" font-size="10" fill="#7a7a98" font-family="Montserrat,sans-serif">12:00</text>
+<text x="830.0" y="370" text-anchor="middle" font-size="10" fill="#7a7a98" font-family="Montserrat,sans-serif">12:30</text>
+
+<!-- Put Line (Red) -->
+<path d="M 70,344 L 100,344 L 110,260 L 120,344 L 380,344 L 390,200 L 400,344 L 460,344 L 470,320 L 480,344 L 560,344 L 570,335 L 580,344 L 790,344 L 800,280 L 810,344 L 830,344" fill="#ff4d5e" fill-opacity="0.18" stroke="none"/>
+<path d="M 70,344 L 100,344 L 110,260 L 120,344 L 380,344 L 390,200 L 400,344 L 460,344 L 470,320 L 480,344 L 560,344 L 570,335 L 580,344 L 790,344 L 800,280 L 810,344 L 830,344" fill="none" stroke="#ff4d5e" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+
+<!-- Call Line (Green) -->
+<path d="M 70,300 L 80,344 L 100,260 L 110,344 L 180,344 L 190,320 L 200,344 L 360,344 L 370,320 L 380,344 L 480,344 L 490,310 L 500,344 L 560,344 L 570,60 L 580,344 L 830,344" fill="#20c997" fill-opacity="0.18" stroke="none"/>
+<path d="M 70,300 L 80,344 L 100,260 L 110,344 L 180,344 L 190,320 L 200,344 L 360,344 L 370,320 L 380,344 L 480,344 L 490,310 L 500,344 L 560,344 L 570,60 L 580,344 L 830,344" fill="none" stroke="#20c997" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+
+<!-- GLD Price Line (Blue) -->
+<path d="M 70,250 L 100,320 L 140,160 L 190,280 L 240,180 L 280,160 L 330,220 L 380,140 L 440,240 L 490,160 L 540,260 L 600,120 L 650,80 L 710,130 L 760,180 L 830,150" fill="none" stroke="#00e5ff" stroke-width="2" stroke-linejoin="round"/>
+
+<text x="450.0" y="16" text-anchor="middle" font-size="13" font-weight="700" fill="#e8e9f5" font-family="Montserrat,sans-serif">Net Flow (Premium) — GLD · Vto. 11 Sep 2026</text>
+</svg></div>
+    <div class="legend-row">
+      <div class="legend-item"><span class="legend-dot" style="background:#20c997"></span>Calls ($1.6M)</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#ff4d5e"></span>Puts ($598K)</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#00e5ff"></span>GLD ($407.16)</div>
+    </div>
+    <div class="insight-row">
+      <div class="insight">
+        <h4>Spike Aislado de Calls</h4>
+        <p>Alrededor de las 11:05 AM el sistema detecta una inyección brutal de prima en Contratos Call, empujando la barra por encima de los $500K en un solo instante. El volumen final favorece las Calls con $1.6M frente a los $598K de las Puts.</p>
+      </div>
+      <div class="insight">
+        <h4>Reacción en Puts</h4>
+        <p>Se aprecian dos momentos concretos de defensa bajista (Puts) en la mañana: uno menor a las 9:40 AM y otro más pronunciado a las 10:25 AM (~$250K), justo antes de que el precio del subyacente repuntara con fuerza.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. NET DRIFT -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num">5</div>
+      <div>
+        <h3 class="sec-title">Net Drift <span class="accent">(Presión Acumulada)</span></h3>
+        <div class="sec-sub">Vencimiento 11 de Septiembre, 2026 · GLD</div>
+      </div>
+    </div>
+    <div class="desc">
+      El <strong>Net Drift</strong> acumula la diferencia de prima entre Calls y Puts a lo largo de toda la jornada.
+    </div>
+    <div class="chart-frame"><svg viewBox="0 0 900 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+<rect x="0" y="0" width="900" height="380" fill="transparent"/>
+<line x1="70" y1="344.0" x2="830" y2="344.0" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+<text x="60" y="348.0" text-anchor="end" font-size="11" fill="#9a9ab4" font-family="Montserrat,sans-serif">-1M</text>
+<line x1="70" y1="285" x2="830" y2="285" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+<text x="60" y="289" text-anchor="end" font-size="11" fill="#9a9ab4" font-family="Montserrat,sans-serif">-750K</text>
+<line x1="70" y1="228" x2="830" y2="228" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+<text x="60" y="232" text-anchor="end" font-size="11" fill="#9a9ab4" font-family="Montserrat,sans-serif">-500K</text>
+<line x1="70" y1="171" x2="830" y2="171" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+<text x="60" y="175" text-anchor="end" font-size="11" fill="#9a9ab4" font-family="Montserrat,sans-serif">-250K</text>
+<line x1="70" y1="114" x2="830" y2="114" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+<text x="60" y="118" text-anchor="end" font-size="11" fill="#9a9ab4" font-family="Montserrat,sans-serif">$0</text>
+<line x1="70" y1="57" x2="830" y2="57" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+<text x="60" y="61" text-anchor="end" font-size="11" fill="#9a9ab4" font-family="Montserrat,sans-serif">250K</text>
+<line x1="70" y1="114" x2="830" y2="114" stroke="#3a3a5a" stroke-width="1.4"/>
+<text x="70.0" y="370" text-anchor="middle" font-size="10" fill="#7a7a98" font-family="Montserrat,sans-serif">9:30</text>
+<text x="178.6" y="370" text-anchor="middle" font-size="10" fill="#7a7a98" font-family="Montserrat,sans-serif">10:00</text>
+<text x="341.4" y="370" text-anchor="middle" font-size="10" fill="#7a7a98" font-family="Montserrat,sans-serif">11:30</text>
+<text x="504.3" y="370" text-anchor="middle" font-size="10" fill="#7a7a98" font-family="Montserrat,sans-serif">1:00</text>
+<text x="667.1" y="370" text-anchor="middle" font-size="10" fill="#7a7a98" font-family="Montserrat,sans-serif">2:30</text>
+<text x="830.0" y="370" text-anchor="middle" font-size="10" fill="#7a7a98" font-family="Montserrat,sans-serif">4:00</text>
+<!-- Reproduciendo la data de la imagen enviada -->
+<path d="M 70,114 L 160,114 L 170,300 L 260,300 L 270,260 L 430,260 L 440,210 L 590,210 L 600,180 L 730,180 L 740,160 L 830,160" fill="none" stroke="#ff4d5e" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 70,114 L 200,114 L 210,80 L 260,80 L 270,140 L 480,140 L 490,120 L 780,120 L 790,160 L 830,160" fill="none" stroke="#20c997" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="450.0" y="16" text-anchor="middle" font-size="13" font-weight="700" fill="#e8e9f5" font-family="Montserrat,sans-serif">Net Drift (Premium) — GLD</text>
+</svg></div>
+    <div class="legend-row">
+      <div class="legend-item"><span class="legend-dot" style="background:#20c997"></span>Calls (-$317.98K)</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#ff4d5e"></span>Puts (-$556.64K)</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#00e5ff"></span>GLD ($396.79)</div>
+    </div>
+    <div class="insight-row">
+      <div class="insight">
+        <h4>Flujo Neto Negativo</h4>
+        <p>A lo largo de la jornada, ambos flujos (Calls y Puts) terminaron en terreno negativo, lo que implica que existió una mayor fuerza de venta de prima (sell to open) o toma de beneficios frente a las compras direccionales. Las Calls fueron "menos negativas" al final de la sesión.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. CONSOLIDATED ORDER FLOW -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num">6</div>
+      <div>
+        <h3 class="sec-title">Consolidated <span class="accent">Order Flow</span></h3>
+        <div class="sec-sub">Órdenes consolidadas por prima · GLD · 4 de Septiembre, 2026</div>
+      </div>
+    </div>
+    <div class="desc v">
+      <strong>Rol de la Herramienta:</strong> Agrupa las órdenes fragmentadas (splits y sweeps multi-bolsa) en una sola transacción unificada para reflejar el tamaño real de la inversión institucional. Permite ver la convicción final del inversor que dividió su entrada.<br><br>
+      <strong>Filas Resaltadas (Cuadro Transparente):</strong> Las filas marcadas con este recuadro representan <em>"Unusual Options Activity"</em> o <em>Golden Sweeps</em>. El algoritmo las destaca porque exceden dramáticamente los parámetros normales de volumen, urgencia de ejecución o comparativa respecto al interés abierto (Open Interest).
+    </div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>Hora</th><th>Contrato</th><th>Spot</th><th>Cant.</th><th>Precio</th><th>Bid-Ask</th><th>Prima</th><th>Sentimiento</th><th>Exchange</th><th>Tipo</th><th>Consolidation</th></tr></thead>
+        <tbody>
+<tr><td>11:03:15 AM</td><td>$420 Call</td><td>$405.69</td><td>2,999</td><td>$1.13</td><td>$1.13 x $1.15</td><td>$338.89 K</td><td><span class="tag sell">BEARISH</span></td><td>NQBX</td><td>AUTO</td><td>BLOCK</td></tr>
+<tr><td>11:03:55 AM</td><td>$420 Call</td><td>$405.69</td><td>2,000</td><td>$1.13</td><td>$1.13 x $1.14</td><td>$226.00 K</td><td><span class="tag sell">BEARISH</span></td><td>NQBX</td><td>AUTO</td><td>BLOCK</td></tr>
+<tr><td>10:47:42 AM</td><td>$405 Call</td><td>$405.63</td><td>300</td><td>$5.50</td><td>$5.45 x $5.65</td><td>$165.00 K</td><td><span class="tag sell">BEARISH</span></td><td>BATS</td><td>AUTO</td><td>BLOCK</td></tr>
+<tr><td>10:27:02 AM</td><td>$400 Put</td><td>$406.34</td><td>500</td><td>$2.46</td><td>$2.42 x $2.54</td><td>$123.20 K</td><td><span class="tag buy">BULLISH</span></td><td>MULTIPLE</td><td>MULTI_AUTO_COB</td><td>SWEEP</td></tr>
+<tr><td>10:27:43 AM</td><td>$400 Put</td><td>$406.48</td><td>500</td><td>$2.45</td><td>$2.38 x $2.53</td><td>$122.50 K</td><td><span class="tag buy">BULLISH</span></td><td>MIAX</td><td>MULTI_AUTO_COB</td><td>SPLIT</td></tr>
+<tr class="highlight-row"><td>11:39:36 AM</td><td>$395 Put</td><td>$407.08</td><td>568</td><td>$1.15</td><td>$1.15 x $1.20</td><td>$65.32 K</td><td><span class="tag buy">BULLISH</span></td><td>MULTIPLE</td><td>AUTO</td><td>SWEEP</td></tr>
+<tr><td>11:23:32 AM</td><td>$410 Put</td><td>$407.46</td><td>100</td><td>$6.40</td><td>$6.25 x $6.50</td><td>$84.00 K</td><td><span class="tag sell">BEARISH</span></td><td>MEMX</td><td>AUTO</td><td>BLOCK</td></tr>
+<tr><td>9:36:58 AM</td><td>$405 Call</td><td>$404.35</td><td>112</td><td>$5.20</td><td>$5.05 x $5.30</td><td>$58.24 K</td><td><span class="tag buy">BULLISH</span></td><td>MULTIPLE</td><td>AUTO</td><td>SWEEP</td></tr>
+<tr><td>9:38:42 AM</td><td>$405 Call</td><td>$404.55</td><td>100</td><td>$5.25</td><td>$5.10 x $5.25</td><td>$52.50 K</td><td><span class="tag buy">BULLISH</span></td><td>PACF</td><td>AUTO</td><td>BLOCK</td></tr>
+<tr><td>9:36:37 AM</td><td>$405 Call</td><td>$404.44</td><td>100</td><td>$5.20</td><td>$5.05 x $5.35</td><td>$52.00 K</td><td><span class="tag neu">NEUTRAL</span></td><td>MULTIPLE</td><td>AUTO</td><td>SWEEP</td></tr>
+<tr><td>9:30:09 AM</td><td>$415 Call</td><td>$404.83</td><td>200</td><td>$1.90</td><td>$1.85 x $1.90</td><td>$38.00 K</td><td><span class="tag buy">BULLISH</span></td><td>EMLD</td><td>AUTO</td><td>BLOCK</td></tr>
+<tr><td>10:43:51 AM</td><td>$425 Call</td><td>$406.01</td><td>500</td><td>$0.69</td><td>$0.68 x $0.75</td><td>$34.50 K</td><td><span class="tag sell">BEARISH</span></td><td>MIAX</td><td>MULTI_AUTO_COB</td><td>BLOCK</td></tr>
+<tr><td>10:47:45 AM</td><td>$425 Call</td><td>$405.61</td><td>493</td><td>$0.61</td><td>$0.66 x $0.69</td><td>$30.07 K</td><td><span class="tag sell">BEARISH</span></td><td>PHIL</td><td>M2S_AUTO</td><td>SPLIT</td></tr>
+<tr><td>10:52:30 AM</td><td>$425 Call</td><td>$405.45</td><td>415</td><td>$0.63</td><td>$0.63 x $0.67</td><td>$26.15 K</td><td><span class="tag sell">BEARISH</span></td><td>MIAX</td><td>MULTI_AUTO_COB</td><td>BLOCK</td></tr>
+<tr class="highlight-row"><td>10:54:30 AM</td><td>$440 Call</td><td>$405.37</td><td>1,200</td><td>$0.19</td><td>$0.18 x $0.21</td><td>$22.80 K</td><td><span class="tag sell">BEARISH</span></td><td>ISEX</td><td>MULTI_AUTO_COB</td><td>SPLIT</td></tr>
+<tr class="highlight-row"><td>10:23:38 AM</td><td>$440 Call</td><td>$406.24</td><td>500</td><td>$0.22</td><td>$0.19 x $0.24</td><td>$11.00 K</td><td><span class="tag buy">BULLISH</span></td><td>CBOE</td><td>MULTI_AUCT_COB</td><td>SPLIT</td></tr>
+<tr class="highlight-row"><td>10:23:05 AM</td><td>$440 Call</td><td>$406.41</td><td>500</td><td>$0.22</td><td>$0.20 x $0.24</td><td>$11.00 K</td><td><span class="tag neu">NEUTRAL</span></td><td>MIAX</td><td>MULTI_AUCT_COB</td><td>BLOCK</td></tr>
+<tr class="highlight-row"><td>10:22:32 AM</td><td>$440 Call</td><td>$406.30</td><td>500</td><td>$0.22</td><td>$0.19 x $0.24</td><td>$11.00 K</td><td><span class="tag buy">BULLISH</span></td><td>CBOE</td><td>MULTI_AUCT_COB</td><td>BLOCK</td></tr>
+<tr class="highlight-row"><td>10:21:02 AM</td><td>$440 Call</td><td>$406.34</td><td>500</td><td>$0.22</td><td>$0.20 x $0.24</td><td>$11.00 K</td><td><span class="tag neu">NEUTRAL</span></td><td>ISEX</td><td>MULTI_AUTO_COB</td><td>BLOCK</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 7. UNCONSOLIDATED ORDER FLOW -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num">7</div>
+      <div>
+        <h3 class="sec-title">Unconsolidated <span class="accent">Order Flow</span></h3>
+        <div class="sec-sub">Impresiones individuales sin agrupar · GLD · 4 de Septiembre, 2026</div>
+      </div>
+    </div>
+    <div class="desc v">
+      <strong>Rol de la Herramienta:</strong> Contrario a la vista consolidada, aquí se muestra cada "pata" o fragmento de la orden por separado, tal y como llega de forma individual a cada bolsa (Exchange). Es vital para entender <em>cómo</em> el algoritmo del inversor fraccionó el bloque principal para ocultar sus huellas y absorber liquidez a diferentes precios.
+    </div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>Hora</th><th>Contrato</th><th>Spot</th><th>Cant.</th><th>Precio</th><th>Bid-Ask</th><th>Prima</th><th>Sentimiento</th><th>Exchange</th><th>Tipo</th><th>Moneyness</th></tr></thead>
+        <tbody>
+<tr><td>11:03:15.243 AM</td><td>$420 Call</td><td>$405.69</td><td>2,999</td><td>$1.13</td><td>$1.13 x $1.15</td><td>$338.89 K</td><td><span class="tag sell">BEARISH</span></td><td>NQBX</td><td>AUTO</td><td>OTM by $14.31</td></tr>
+<tr><td>11:03:55.772 AM</td><td>$420 Call</td><td>$405.69</td><td>2,000</td><td>$1.13</td><td>$1.13 x $1.14</td><td>$226.00 K</td><td><span class="tag sell">BEARISH</span></td><td>NQBX</td><td>AUTO</td><td>OTM by $14.31</td></tr>
+<tr><td>10:47:42.563 AM</td><td>$405 Call</td><td>$405.63</td><td>300</td><td>$5.50</td><td>$5.45 x $5.65</td><td>$165.00 K</td><td><span class="tag sell">BEARISH</span></td><td>BATS</td><td>AUTO</td><td>ITM by $0.63</td></tr>
+<tr><td>10:27:43.628 AM</td><td>$400 Put</td><td>$406.48</td><td>499</td><td>$2.45</td><td>$2.38 x $2.53</td><td>$122.26 K</td><td><span class="tag buy">BULLISH</span></td><td>MIAX</td><td>MULTI_AUTO_COB</td><td>OTM by $6.48</td></tr>
+<tr><td>11:28:54.054 AM</td><td>$410 Put</td><td>$407.21</td><td>99</td><td>$6.50</td><td>$6.50 x $6.55</td><td>$64.35 K</td><td><span class="tag buy">BULLISH</span></td><td>PACF</td><td>AUTO</td><td>ITM by $2.79</td></tr>
+<tr><td>11:23:32.754 AM</td><td>$410 Put</td><td>$407.46</td><td>100</td><td>$6.40</td><td>$6.25 x $6.50</td><td>$64.00 K</td><td><span class="tag sell">BEARISH</span></td><td>MEMX</td><td>AUTO</td><td>ITM by $2.54</td></tr>
+<tr><td>11:24:42.035 AM</td><td>$410 Put</td><td>$407.31</td><td>99</td><td>$6.40</td><td>$6.40 x $6.55</td><td>$63.36 K</td><td><span class="tag buy">BULLISH</span></td><td>PACF</td><td>AUTO</td><td>ITM by $2.69</td></tr>
+<tr><td>9:38:42.843 AM</td><td>$405 Call</td><td>$404.55</td><td>100</td><td>$5.25</td><td>$5.10 x $5.25</td><td>$52.50 K</td><td><span class="tag buy">BULLISH</span></td><td>PACF</td><td>AUTO</td><td>ATM by $0.45</td></tr>
+<tr><td>9:36:58.894 AM</td><td>$405 Call</td><td>$404.35</td><td>100</td><td>$5.20</td><td>$5.05 x $5.30</td><td>$52.00 K</td><td><span class="tag buy">BULLISH</span></td><td>MEMX</td><td>AUTO</td><td>OTM by $0.65</td></tr>
+<tr><td>9:30:09.169 AM</td><td>$415 Call</td><td>$404.83</td><td>200</td><td>$1.90</td><td>$1.85 x $1.90</td><td>$38.00 K</td><td><span class="tag buy">BULLISH</span></td><td>EMLD</td><td>AUTO</td><td>OTM by $10.17</td></tr>
+<tr><td>10:43:51.541 AM</td><td>$425 Call</td><td>$405.99</td><td>500</td><td>$0.69</td><td>$0.68 x $0.75</td><td>$34.50 K</td><td><span class="tag sell">BEARISH</span></td><td>MIAX</td><td>MULTI_AUTO_COB</td><td>OTM by $19.01</td></tr>
+<tr><td>9:45:13.963 AM</td><td>$405 Call</td><td>$405.71</td><td>50</td><td>$5.72</td><td>$5.60 x $5.80</td><td>$28.60 K</td><td><span class="tag buy">BULLISH</span></td><td>AMEX</td><td>AUCT</td><td>ITM by $0.71</td></tr>
+<tr><td>10:47:45.944 AM</td><td>$425 Call</td><td>$405.61</td><td>431</td><td>$0.61</td><td>$0.66 x $0.67</td><td>$26.29 K</td><td><span class="tag sell">BEARISH</span></td><td>PHIL</td><td>M2S_AUTO</td><td>OTM by $19.39</td></tr>
+<tr><td>10:52:30.504 AM</td><td>$425 Call</td><td>$405.45</td><td>415</td><td>$0.63</td><td>$0.63 x $0.67</td><td>$26.15 K</td><td><span class="tag sell">BEARISH</span></td><td>MIAX</td><td>MULTI_AUTO_COB</td><td>OTM by $19.55</td></tr>
+<tr><td>10:58:15.083 AM</td><td>$405 Call</td><td>$405.72</td><td>45</td><td>$5.55</td><td>$5.45 x $5.55</td><td>$24.98 K</td><td><span class="tag buy">BULLISH</span></td><td>PACF</td><td>ISO</td><td>ITM by $0.72</td></tr>
+<tr><td>10:27:02.184 AM</td><td>$400 Put</td><td>$406.34</td><td>100</td><td>$2.47</td><td>$2.42 x $2.54</td><td>$24.70 K</td><td><span class="tag buy">BULLISH</span></td><td>ISEX</td><td>MULTI_AUTO_COB</td><td>OTM by $6.34</td></tr>
+<tr><td>10:27:02.081 AM</td><td>$400 Put</td><td>$406.34</td><td>100</td><td>$2.47</td><td>$2.42 x $2.54</td><td>$24.70 K</td><td><span class="tag buy">BULLISH</span></td><td>ISEX</td><td>MULTI_AUTO_COB</td><td>OTM by $6.34</td></tr>
+<tr><td>10:27:02.392 AM</td><td>$400 Put</td><td>$406.34</td><td>100</td><td>$2.46</td><td>$2.42 x $2.54</td><td>$24.60 K</td><td><span class="tag buy">BULLISH</span></td><td>PACF</td><td>MULTI_AUTO_COB</td><td>OTM by $6.34</td></tr>
+<tr><td>10:27:02.289 AM</td><td>$400 Put</td><td>$406.34</td><td>100</td><td>$2.46</td><td>$2.42 x $2.54</td><td>$24.60 K</td><td><span class="tag buy">BULLISH</span></td><td>PACF</td><td>MULTI_AUTO_COB</td><td>OTM by $6.34</td></tr>
+<tr><td>10:27:02.286 AM</td><td>$400 Put</td><td>$406.34</td><td>100</td><td>$2.46</td><td>$2.42 x $2.54</td><td>$24.60 K</td><td><span class="tag buy">BULLISH</span></td><td>ISEX</td><td>MULTI_AUTO_COB</td><td>OTM by $6.34</td></tr>
+<tr><td>9:41:47.955 AM</td><td>$405 Call</td><td>$404.52</td><td>45</td><td>$5.10</td><td>$5.10 x $5.30</td><td>$22.95 K</td><td><span class="tag sell">BEARISH</span></td><td>PHIL</td><td>AUCT</td><td>ATM by $0.48</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- GLOSARIO -->
+  <div class="glossary">
+    <div style="text-align:center;"><span class="brand-pill" style="margin-bottom:14px;display:inline-block;">Referencia Técnica</span></div>
+    <h2>Glosario de Términos</h2>
+    <p class="sub">Definiciones de los conceptos técnicos utilizados en este reporte.</p>
+    <div class="term-grid">
+      <div class="term-card"><h4>Consolidated Order Flow</h4><p>Vista agrupada que une todas las partes fraccionadas de una operación inter-mercado para medir el verdadero tamaño y convicción de la entrada institucional.</p></div>
+      <div class="term-card"><h4>Unconsolidated Order Flow</h4><p>Listado bruto que muestra orden por orden (pata por pata) tal cual se imprimió en cada bolsa. Permite auditar la ejecución de algoritmos de ruteo y sweeps.</p></div>
+      <div class="term-card"><h4>Cuadrado Transparente (Highlight)</h4><p>Marca visual que el sistema aplica a las transacciones inusuales (Golden Sweeps) que sobrepasan métricas normales de prima invertida y agresividad comparada al Open Interest.</p></div>
+      <div class="term-card"><h4>Net Flow / Net Drift</h4><p>Métricas acumulativas de prima pagada por Calls frente a Puts a lo largo de la sesión para revelar tendencias macro diarias.</p></div>
+    </div>
+  </div>
+
+  <!-- DISCLAIMER -->
+  <div class="disclaimer">
+    <h3>⚠ Descargo de Responsabilidad</h3>
+    <p>Este reporte tiene fines exclusivamente <strong>informativos y educativos</strong>. La información
+      presentada proviene de una sesión de análisis sobre datos de flujo de opciones y dark pool de QuantData, y
+      no constituye, bajo ninguna circunstancia, una recomendación de inversión, asesoría financiera personalizada,
+      ni una oferta o solicitud de compra/venta de ningún instrumento financiero.</p>
+    <p>Operar en mercados financieros, y en particular con <strong>Contratos por Diferencia (CFDs)</strong> y
+      derivados como opciones, conlleva un <strong>alto nivel de riesgo</strong> y puede no ser adecuado para
+      todos los inversores. Estos instrumentos son complejos y presentan un riesgo elevado de perder dinero
+      rápidamente debido al apalancamiento. Rendimientos pasados no garantizan resultados futuros.</p>
+    <p>La Zona no se hace responsable por pérdidas derivadas de decisiones de inversión tomadas con
+      base en este contenido. Se recomienda que cada usuario realice su propio análisis y consulte con un asesor
+      financiero autorizado antes de operar.</p>
+  </div>
+
+</div>
+
+<footer>
+  <div class="credit">Elaborado por <strong>La Zona</strong>. Información extraída de QuantData.</div>
+</footer>
+
+</body>
+</html>
